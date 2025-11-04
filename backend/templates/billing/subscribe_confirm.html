@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load price_filters %}
+
+{% block title %}
+    {% if action == 'upgrade' %}Nâng cấp • {{ plan.name }}
+    {% elif action == 'downgrade' %}Hạ cấp • {{ plan.name }}
+    {% else %}Đăng ký • {{ plan.name }}{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-xl-5 col-lg-6 col-md-8 col-sm-10">
+
+        <!-- TIÊU ĐỀ + HÀNH ĐỘNG -->
+        <div class="text-center mb-5">
+            <div class="d-inline-flex align-items-center gap-2 mb-3">
+                {% if action == 'upgrade' %}
+                    <span class="badge bg-primary text-white px-3 py-2 rounded-pill animate-pulse">Nâng cấp</span>
+                {% elif action == 'downgrade' %}
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">Hạ cấp</span>
+                {% else %}
+                    <span class="badge bg-success text-white px-3 py-2 rounded-pill">Đăng ký</span>
+                {% endif %}
+            </div>
+            <h1 class="page-title" style="font-size: 2.4rem; font-weight: 800;">{{ plan.name }}</h1>
+            <p class="page-subtitle" style="font-size: 1.15rem;">
+                {% if active_sub %}
+                    Từ <strong class="text-decoration-line-through text-muted">{{ active_sub.plan.name }}</strong>
+                    <span class="text-success fw-bold">→ {{ plan.name }}</span>
+                {% else %}
+                    Bắt đầu sử dụng ngay hôm nay
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- CARD CHÍNH -->
+        <div class="card-modern p-0 overflow-hidden rounded-4 shadow-lg"
+             style="border: 3px solid transparent; background: linear-gradient(white, white) padding-box,
+                    linear-gradient(135deg, var(--primary), var(--secondary)) border-box;">
+
+            <div class="p-5 text-white text-center position-relative overflow-hidden"
+                 style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 1.5rem 1.5rem 0 0;">
+                <h2 class="mb-0 fw-bold">{{ plan.name }}</h2>
+                <p class="mb-0 opacity-90 small">Gói bạn đang chọn</p>
+            </div>
+
+            <div class="p-5 pt-4">
+
+                <!-- GIÁ + DUNG LƯỢNG -->
+                <div class="text-center mb-5">
+                    <div class="display-4 fw-black text-success mb-2">{{ plan.price|format_price }}</div>
+                    <p class="text-muted mb-2">cho <strong>{{ plan.duration_days }} ngày</strong></p>
+                    <div class="d-flex align-items-center justify-content-center gap-2 text-success">
+                        <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                        <span class="fw-bold">{{ plan.storage_limit|filesizeformat }}</span>
+                    </div>
+                </div>
+
+                <!-- SO SÁNH -->
+                {% if active_sub %}
+                <div class="bg-light rounded-4 p-4 mb-4 border
+                    {% if action == 'upgrade' %}border-primary{% elif action == 'downgrade' %}border-warning{% endif %}
+                    border-2">
+                    <p class="mb-3 small text-muted fw-semibold text-center">So sánh với gói hiện tại</p>
+                    <div class="row text-center small">
+                        <div class="col-6">
+                            <del class="text-muted d-block">{{ active_sub.plan.price|format_price }}</del>
+                            <span class="fw-bold
+                                {% if action == 'upgrade' %}text-success{% else %}text-warning{% endif %}">
+                                → {{ plan.price|format_price }}
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <del class="text-muted d-block">{{ active_sub.plan.storage_limit|filesizeformat }}</del>
+                            <span class="fw-bold
+                                {% if action == 'upgrade' %}text-success{% else %}text-warning{% endif %}">
+                                → {{ plan.storage_limit|filesizeformat }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- GÓI HIỆN TẠI -->
+                <div class="mb-4">
+                    <p class="text-muted small fw-medium mb-2">Gói hiện tại:</p>
+                    {% if active_sub %}
+                        <div class="alert p-3 mb-0 d-flex align-items-center rounded-3
+                            {% if action == 'upgrade' %}alert-info{% elif action == 'downgrade' %}alert-warning{% else %}alert-success{% endif %}">
+                            <div class="bg-white bg-opacity-20 rounded-circle p-2 me-3">
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <strong>{{ active_sub.plan.name }}</strong><br>
+                                <small class="opacity-75">Hết hạn: {{ active_sub.end_date|date:"d/m/Y" }}</small>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-light p-3 mb-0 text-center border rounded-3">
+                            <span class="text-muted fw-medium">Chưa có gói</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- TỔNG KẾT – HIỂN THỊ SỐ TIỀN CẦN THANH TOÁN -->
+<div class="payment-summary mt-4
+     {% if action == 'upgrade' %}payment-summary-upgrade
+     {% elif action == 'downgrade' %}payment-summary-downgrade
+     {% else %}payment-summary-register{% endif %}">
+
+    <div class="title">
+        Số tiền cần thanh toán
+    </div>
+
+    <div class="amount">
+        {% if payment_amount > 0 %}
+            {{ payment_amount|format_price }}
+        {% else %}
+            0đ
+        {% endif %}
+    </div>
+
+    <div class="note">
+        {% if action == 'upgrade' %}
+            <strong>Chênh lệch:</strong> {{ active_sub.plan.name }} → {{ plan.name }}<br>
+            Gói mới có hiệu lực <strong>ngay lập tức</strong>
+        {% elif action == 'downgrade' %}
+            <strong>Miễn phí</strong> khi hạ cấp<br>
+            Gói mới có hiệu lực <strong>ngay lập tức</strong>
+        {% else %}
+            Thanh toán một lần • Tự động gia hạn
+        {% endif %}
+    </div>
+</div>
+            </div>
+        </div>
+
+        <!-- NÚT HÀNH ĐỘNG -->
+        <div class="d-grid d-md-flex gap-3 justify-content-center mt-5">
+            <form method="post" class="d-inline">
+    {% csrf_token %}
+    {% if payment_amount > 0 %}
+        <button type="submit"
+                class="btn-modern btn-action btn-upgrade"
+                formaction="{% url 'billing:vnpay_payment' plan.id %}">
+            Thanh toán qua VNPAY
+        </button>
+    {% else %}
+        <button type="submit"
+                class="btn-modern btn-action btn-downgrade">
+            Kích hoạt miễn phí
+        </button>
+    {% endif %}
+</form>
+            <a href="{% url 'billing:plan_list' %}"
+               class="btn-modern btn-action btn-cancel">
+                Hủy bỏ
+            </a>
+        </div>
+
+        <!-- LƯU Ý -->
+        <div class="text-center mt-4">
+            <p class="text-white opacity-75 small d-flex align-items-center justify-content-center gap-2">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
+                    <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995z"/>
+                </svg>
+                {% if active_sub %}
+                    Không hoàn tiền gói cũ • Hỗ trợ 24/7
+                {% else %}
+                    Thanh toán an toàn • Hoàn tiền 7 ngày
+                {% endif %}
+            </p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

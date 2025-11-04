@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Bạn đã có gói • Cloud Storage{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+
+        <div class="text-center mb-5">
+            <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-15 text-success rounded-circle mb-4" style="width: 80px; height: 80px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+            </div>
+            <h1 class="page-title" style="font-size: 2.3rem;">Bạn đã có gói đăng ký!</h1>
+            <p class="page-subtitle">Dưới đây là thông tin chi tiết gói hiện tại</p>
+        </div>
+
+        <div class="card-modern p-0 overflow-hidden" style="border: 2px solid var(--success);">
+            <div class="p-4 bg-success text-white">
+                <h3 class="mb-1">Gói đang hoạt động</h3>
+                <p class="mb-0 opacity-90">Bạn đang sử dụng dịch vụ lưu trữ</p>
+            </div>
+
+            <div class="p-4">
+                {% if active_sub %}
+                <div class="row g-3">
+                    <div class="col-12">
+                        <p class="text-muted mb-1 small">Tên gói</p>
+                        <p class="fs-4 fw-bold text-success mb-0">{{ active_sub.plan.name }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="text-muted mb-1 small">Dung lượng</p>
+                        <p class="fs-5 fw-bold mb-0">{{ active_sub.plan.storage_limit|filesizeformat }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="text-muted mb-1 small">Hết hạn</p>
+                        <p class="fs-5 fw-bold mb-0">{{ active_sub.end_date|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <div class="d-flex justify-content-between text-muted small mb-2">
+                        <span>Tiến độ sử dụng</span>
+                        <span>3.2 GB / {{ active_sub.plan.storage_limit|filesizeformat }}</span>
+                    </div>
+                    <div class="progress" style="height: 10px; border-radius: 50px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 64%;" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="text-muted mb-0">Không tìm thấy gói đăng ký nào.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'billing:plan_list' %}" class="btn-modern btn-primary px-5 py-3" style="border-radius: 50px; font-size: 1.1rem;">
+                Quay lại danh sách gói
+            </a>
+        </div>
+
+        <div class="text-center mt-4">
+            <p class="text-white opacity-75 small">
+                Gói sẽ tự động gia hạn khi hết hạn • Liên hệ hỗ trợ nếu cần
+            </p>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
