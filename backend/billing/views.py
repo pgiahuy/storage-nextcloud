@@ -226,25 +226,25 @@ def plan_list(request):
     })
 
 
-
-# CRUD PLAN (ADMIN)
-@login_required
-@admin_required
-def plan_create(request):
-    # ... (giữ nguyên code của bạn)
-    pass
-
-@login_required
-@admin_required
-def plan_update(request, pk):
-    # ... (giữ nguyên)
-    pass
-
-@login_required
-@admin_required
-def plan_delete(request, pk):
-    # ... (giữ nguyên)
-    pass
+#
+# # CRUD PLAN (ADMIN)
+# @login_required
+# @admin_required
+# def plan_create(request):
+#     # ... (giữ nguyên code của bạn)
+#     pass
+#
+# @login_required
+# @admin_required
+# def plan_update(request, pk):
+#     # ... (giữ nguyên)
+#     pass
+#
+# @login_required
+# @admin_required
+# def plan_delete(request, pk):
+#     # ... (giữ nguyên)
+#     pass
 
 
 # API: PLAN LIST/CREATE

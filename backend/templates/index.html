@@ -133,11 +133,11 @@
 
     {% if user.is_authenticated %}
         <p>Xin chào, <strong>{{ user.username }}</strong>!</p>
-        <a href="{% url 'logout' %}">Đăng xuất</a>
+        <a href="{% url 'users:logout' %}">Đăng xuất</a>
         <a href="{% url 'billing:plan_list' %}">Xem gói cước</a>
     {% else %}
-        <a href="{% url 'login' %}">Đăng nhập</a>
-        <a href="{% url 'register' %}">Đăng ký</a>
+        <a href="{% url 'users:login' %}">Đăng nhập</a>
+        <a href="{% url 'users:register' %}">Đăng ký</a>
     {% endif %}
 </body>
 </html>

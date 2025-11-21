@@ -434,9 +434,9 @@
         <div class="user-menu">
             {% if user.is_authenticated %}
             Xin chào, <strong>{{ user.username }}</strong> |
-            <a href="{% url 'logout' %}">Đăng xuất</a>
+            <a href="{% url 'users:logout' %}">Đăng xuất</a>
             {% else %}
-            <a href="{% url 'login' %}">Đăng nhập</a>
+            <a href="{% url 'users:login' %}">Đăng nhập</a>
             {% endif %}
         </div>
     </header>

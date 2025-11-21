@@ -34,12 +34,17 @@
         <p class="mb-0 text-muted">
             <strong>Hết hạn:</strong> {{ active_sub.end_date|date:"d/m/Y" }}
         </p>
-        <div class="mt-3">
-            <div class="progress" style="height: 10px; border-radius: 50px; background: #e9ecef;">
-                <div class="progress-bar bg-success" role="progressbar" style="width: 68%;"></div>
-            </div>
-            <small class="text-muted d-block mt-2">Đã dùng 3.4 GB / {{ active_sub.plan.storage_limit|filesizeformat}}</small>
+        {% load custom_filters %}
+
+        <div class="progress" style="height: 10px; border-radius: 50px; background: #e9ecef;">
+            <div class="progress-bar bg-success" role="progressbar"
+                 style="width: {{ user.used_storage|percentage:active_sub.plan.storage_limit }}%;"></div>
         </div>
+        <small class="text-muted d-block mt-2">
+            Đã dùng {{ user.used_storage|filesizeformat }} / {{ user.quota|filesizeformat }}
+        </small>
+
+
     </div>
 </div>
 {% else %}

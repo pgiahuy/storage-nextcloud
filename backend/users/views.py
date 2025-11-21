@@ -81,6 +81,8 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
+            if user.is_superuser:
+                return redirect('/admin/')
             return redirect('billing:plan_list')
         else:
             return render(request, 'users/login.html', {'error': 'Invalid credentials'})
@@ -110,7 +112,7 @@ def api_logout(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('users:login')
 
 
 
