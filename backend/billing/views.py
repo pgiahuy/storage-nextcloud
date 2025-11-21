@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,14 +12,19 @@ import hashlib
 import hmac
 import urllib.parse
 import time
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
+from users.models import CustomUser
+import json
 from .models import Plans, Subscriptions, Payments, Invoices
 
 # VNPAY
-VNPAY_TMN_CODE = ""
-VNPAY_HASH_SECRET = ""
+VNPAY_TMN_CODE = "Q2FNEKGM"
+VNPAY_HASH_SECRET = "0TCYX8WBOXJIRXHOTYJFD65650S06J6I"
 VNPAY_RETURN_URL = "http://127.0.0.1:8000/billing/vnpay_return/"
 VNPAY_PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-
 
 
 @login_required
@@ -53,12 +59,19 @@ def subscribe_plan(request, pk):
             # free -> skip vnpay
             if active_sub and action != 'current':
                 active_sub.delete()
+            if plan.id == 1:  # gói free
+                end_date = None
+            else:
+                end_date = today + timedelta(days=plan.duration_days)
+
             Subscriptions.objects.create(
-                user=request.user, plan=plan,
+                user=request.user,
+                plan=plan,
                 start_date=today,
-                end_date=today + timedelta(days=plan.duration_days),
+                end_date=end_date,
                 status='active'
             )
+
             return redirect('billing:subscribe_success')
         else:
             # fee -> vnpay
@@ -186,8 +199,9 @@ def plan_list(request):
 
     active_sub = Subscriptions.objects.filter(
         user=request.user,
-        status='active',
-        end_date__gte=today
+        status='active'
+    ).filter(
+        Q(end_date__gte=today) | Q(end_date__isnull=True)
     ).first()
 
     plan_list = []
@@ -271,3 +285,27 @@ def plan_detail(request, pk):
     elif request.method == 'DELETE':
         plan.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@csrf_exempt
+def api_available_plans(request):
+    if request.method == "GET":
+        plans = Plans.objects.all().values("id", "name", "price", "duration_days")
+        return JsonResponse(list(plans), safe=False)
+    return JsonResponse({"error": "Method not allowed"}, status=405)
+
+
+@csrf_exempt
+def api_subscribe_plan(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        try:
+            user = CustomUser.objects.get(id=data.get("user_id"))
+            plan = Plans.objects.get(id=data.get("plan_id"))
+        except (CustomUser.DoesNotExist, Plans.DoesNotExist):
+            return JsonResponse({"error": "User or Plan not found"}, status=404)
+
+        end_date = timezone.now() + timedelta(days=plan.duration_days)
+        Subscriptions.objects.create(user=user, plan=plan, end_date=end_date)
+        return JsonResponse({"success": True, "plan": plan.name, "end_date": end_date})
+    return JsonResponse({"error": "Method not allowed"}, status=405)

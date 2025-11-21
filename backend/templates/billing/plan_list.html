@@ -15,8 +15,10 @@
 </div>
 
 {% if active_sub %}
-<div class="card-modern text-center mb-5 p-4 position-relative overflow-hidden" style="max-width: 520px; margin: 0 auto; border: 3px solid var(--success);">
-    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10" style="background: linear-gradient(45deg, var(--success), transparent);"></div>
+<div class="card-modern text-center mb-5 p-4 position-relative overflow-hidden"
+     style="max-width: 520px; margin: 0 auto; border: 3px solid var(--success);">
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10"
+         style="background: linear-gradient(45deg, var(--success), transparent);"></div>
     <div class="position-relative">
         <div class="d-flex align-items-center justify-content-center gap-3 text-success mb-3">
             <div class="bg-success bg-opacity-15 rounded-circle p-3">
@@ -36,7 +38,7 @@
             <div class="progress" style="height: 10px; border-radius: 50px; background: #e9ecef;">
                 <div class="progress-bar bg-success" role="progressbar" style="width: 68%;"></div>
             </div>
-            <small class="text-muted d-block mt-2">Đã dùng 3.4 GB / {{ active_sub.plan.storage_limit|filesizeformat }}</small>
+            <small class="text-muted d-block mt-2">Đã dùng 3.4 GB / {{ active_sub.plan.storage_limit|filesizeformat}}</small>
         </div>
     </div>
 </div>
@@ -60,8 +62,7 @@
             {% if item.action == 'current' %}border-success border-4{% endif %}
             {% if item.action == 'upgrade' %}border-primary border-3 shadow-blue{% endif %}
             {% if item.action == 'downgrade' %}border-warning border-3 shadow-yellow{% endif %}"
-            style="transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-
+             style="transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
 
 
             <div class="p-5 pt-6 text-center">
@@ -70,25 +71,34 @@
                 <div class="mb-4">
                     <span class="fw-black" style="color: var(--dark); font-weight: 900; font-size: 270%;">{{ item.plan.price|format_price }}</span>
 
-                    <p class="text-muted mb-0 small">cho {{ item.plan.duration_days }} ngày</p>
+                    <p class="text-muted mb-0 small">
+                        {% if subscription.end_date is None %}
+                        vĩnh viễn
+                        {% else %}
+                        hết hạn: {{ subscription.end_date }}
+                        {% endif %}
+                    </p>
                 </div>
 
                 <div class="text-start mb-4">
                     <ul class="list-unstyled space-y-3">
                         <li class="d-flex align-items-center text-success fw-semibold">
-                            <svg width="20" height="20" fill="currentColor" class="me-2 flex-shrink-0" viewBox="0 0 16 16">
+                            <svg width="20" height="20" fill="currentColor" class="me-2 flex-shrink-0"
+                                 viewBox="0 0 16 16">
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                             </svg>
                             <strong>{{ item.plan.storage_limit|filesizeformat }}</strong> dung lượng
                         </li>
                         <li class="d-flex align-items-center text-success fw-semibold">
-                            <svg width="20" height="20" fill="currentColor" class="me-2 flex-shrink-0" viewBox="0 0 16 16">
+                            <svg width="20" height="20" fill="currentColor" class="me-2 flex-shrink-0"
+                                 viewBox="0 0 16 16">
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                             </svg>
                             Tự động gia hạn
                         </li>
                         <li class="d-flex align-items-center text-success fw-semibold">
-                            <svg width="20" height="20" fill="currentColor" class="me-2 flex-shrink-0" viewBox="0 0 16 16">
+                            <svg width="20" height="20" fill="currentColor" class="me-2 flex-shrink-0"
+                                 viewBox="0 0 16 16">
                                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
                             </svg>
                             Hỗ trợ 24/7
@@ -99,28 +109,28 @@
                 <!-- NÚT HÀNH ĐỘNG -->
                 <div class="mt-auto">
                     {% if item.action == 'current' %}
-                        <button class="btn-modern w-100 py-3 rounded-pill fw-bold"
-                                style="background: var(--success); color: white; cursor: not-allowed;" disabled>
-                            Đang sử dụng
-                        </button>
+                    <button class="btn-modern w-100 py-3 rounded-pill fw-bold"
+                            style="background: var(--success); color: white; cursor: not-allowed;" disabled>
+                        Đang sử dụng
+                    </button>
                     {% elif item.action == 'register' %}
-                        <a href="{% url 'billing:subscribe_plan' item.plan.id %}"
-                           class="btn-modern w-100 py-3 rounded-pill fw-bold text-white"
-                           style="background: linear-gradient(135deg, #28a745, #20c997); box-shadow: 0 8px 20px rgba(40,167,69,0.3);">
-                            Đăng ký ngay
-                        </a>
+                    <a href="{% url 'billing:subscribe_plan' item.plan.id %}"
+                       class="btn-modern w-100 py-3 rounded-pill fw-bold text-white"
+                       style="background: linear-gradient(135deg, #28a745, #20c997); box-shadow: 0 8px 20px rgba(40,167,69,0.3);">
+                        Đăng ký ngay
+                    </a>
                     {% elif item.action == 'upgrade' %}
-                        <a href="{% url 'billing:subscribe_plan' item.plan.id %}"
-                           class="btn-modern w-100 py-3 rounded-pill fw-bold text-white animate-pulse"
-                           style="background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 8px 25px rgba(102,126,234,0.4);">
-                            Nâng cấp
-                        </a>
+                    <a href="{% url 'billing:subscribe_plan' item.plan.id %}"
+                       class="btn-modern w-100 py-3 rounded-pill fw-bold text-white animate-pulse"
+                       style="background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: 0 8px 25px rgba(102,126,234,0.4);">
+                        Nâng cấp
+                    </a>
                     {% elif item.action == 'downgrade' %}
-                        <a href="{% url 'billing:subscribe_plan' item.plan.id %}"
-                           class="btn-modern w-100 py-3 rounded-pill fw-bold"
-                           style="background: linear-gradient(135deg, #ffc107, #ffb300); color: #212529; box-shadow: 0 8px 20px rgba(255,193,7,0.3);">
-                            Hạ cấp
-                        </a>
+                    <a href="{% url 'billing:subscribe_plan' item.plan.id %}"
+                       class="btn-modern w-100 py-3 rounded-pill fw-bold"
+                       style="background: linear-gradient(135deg, #ffc107, #ffb300); color: #212529; box-shadow: 0 8px 20px rgba(255,193,7,0.3);">
+                        Hạ cấp
+                    </a>
                     {% endif %}
                 </div>
             </div>

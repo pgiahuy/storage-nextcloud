@@ -1,17 +1,19 @@
 import json
 import uuid
 from datetime import date, timedelta
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate, get_user_model
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
-
+from rest_framework.decorators import api_view
 from billing.models import *
+from rest_framework.response import Response
+from billing.models import Plans, Payments, Invoices, Subscriptions
 
-from backend.billing.models import Plans, Payments, Invoices, Subscriptions
+from users.models import CustomUser
+from users.serializers import UserSerializer
 
 User = get_user_model()
 
@@ -97,6 +99,12 @@ def login_user(request):
             return JsonResponse({'message': 'Login successful', 'user_id': user.id})
         return JsonResponse({'message': 'Invalid credentials'}, status=400)
     return JsonResponse({'message': 'Invalid request'}, status=400)
+
+@csrf_exempt
+@api_view(['POST'])
+def api_logout(request):
+    logout(request)
+    return Response({'message': 'Logout successful'})
 
 
 @login_required
@@ -195,3 +203,14 @@ def subscribe_plan_api(request):
         'invoice_number': invoice.invoice_number,
         'payment_id': payment.id
     })
+
+
+
+@api_view(['GET'])
+def api_user_info(request, user_id):
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+    serializer = UserSerializer(user)
+    return Response(serializer.data)
